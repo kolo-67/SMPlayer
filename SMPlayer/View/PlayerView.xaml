@@ -478,6 +478,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Button Grid.Column="1" ToolTip="Add folders" Command="{Binding AddFoldersCommand}">
                         <Image Width="30" Height="30"  Source="Pictures\AddTable_5632_32.bmp"/>
@@ -499,6 +500,9 @@
                     </Button>
                     <Button Grid.Column="7" ToolTip="Delete Play List"  Command="{Binding DeletePlayListCommand}">
                         <Image Width="30" Height="30" Source="Pictures\Clearallrequests_8816.png"/>
+                    </Button>
+                    <Button Grid.Column="8" ToolTip="Change PathC"  Command="{Binding ChangePathCommand}">
+                        <Image Width="30" Height="30" Source="Pictures\NewProperty_6860_32.bmp"/>
                     </Button>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding MediaData}">

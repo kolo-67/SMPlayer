@@ -32,6 +32,7 @@ namespace SMPlayerViewModel
         public event Action StopQuery;
         public event Action<object,object> ListChangeQuery;
         public event Action<object> FolderDialogQuery;
+        public event Action<object> ChangePathDialogQuery;
         public event Action<Object> MainGridScrollIntoView;
         //----------------------------------------------------------------------------------------------------------------------
         public MediaDataViewModel MediaData
@@ -104,31 +105,11 @@ namespace SMPlayerViewModel
             else
             {
                 MediaElementSource = @"E:\Data\Sound\OC-2\VIA Eolika(1980-1988)\Noktjurn.mp3";
-                string[] dirs = new[] { @"E:\Data\Sound\OC-3\Abba\", @"E:\Data\Sound\OC-3\Океан Ельзи\", 
-@"E:\Data\Sound\OC-3\GipsyKings\", @"E:\Data\Sound\OC-3\Beatles\",@"E:\Data\Sound\OC-3\Instrumental\", @"D:\Video\Archive\Rossia\Архитектура России\" };
                 data = new MediaData();
-                foreach (var dir in dirs)
-                {
-                    if (Directory.Exists((dir)))
-                    {
-                        DirectoryInfo di = new DirectoryInfo(dir);
-                        TrackList list = new TrackList() { ListName = di.Name };
-                        foreach (var fi in di.GetFiles("*.*"))
-                        {
-                            TrackInfo ti = new TrackInfo()
-                            {
-                                DirectoryName = di.Name,
-                                FileName = fi.Name,
-                                FullDirectoryName = di.FullName,
-                                Position = 0.0
-                            };
-                            list.Traks.Add(ti);
-                        }
-                        if (list.Traks.Count > 0)
-                            list.CurrentTrack = list.Traks[0];
-                        data.TrakLists.Add(list);
-                    }
-                }
+                TrackList list = new TrackList() { ListName = "Video" };
+
+                data.TrakLists.Add(list);
+
                 data.CurrentTrackList = data.TrakLists[0];
                 MediaData = new MediaDataViewModel(data);
                 Save();
@@ -240,6 +221,11 @@ namespace SMPlayerViewModel
             Action<object> handle = FolderDialogQuery;
             if (handle != null)
                 handle(showFolderViewModel);
+        }
+        //-------------------------------------------------------------------------------------------------------------------
+        public void OnChangePathDialogQuery(ChangePathViewModel changePathViewModel)
+        {
+            ChangePathDialogQuery?.Invoke(changePathViewModel);
         }
         //-------------------------------------------------------------------------------------------------------------------
         private ICommand playCommand;
@@ -383,6 +369,45 @@ namespace SMPlayerViewModel
         }
         //-------------------------------------------------------------------------------------------------------------------
         private bool CanAddFoldersAction()
+        {
+            return true;
+        }
+        //-------------------------------------------------------------------------------------------------------------------
+        private ICommand changePathCommand;
+        //-------------------------------------------------------------------------------------------------------------------
+        public ICommand ChangePathCommand
+        {
+            get
+            {
+                if (changePathCommand == null)
+                {
+                    changePathCommand = new DelegateCommand(ChangePathAction, CanChangePathAction);
+                }
+                return changePathCommand;
+            }
+        }
+        //-------------------------------------------------------------------------------------------------------------------
+        private void ChangePathAction()
+        {
+            if (MediaData.CurrentList == null || (MediaData.CurrentList?.Traks?.Count ?? 0) == 0)
+                return;
+            ChangePathViewModel changePathViewModel = new ChangePathViewModel() {
+                PathFrom = MediaData.CurrentList.Traks[0].FullDirectoryName,
+                PathTo = ""
+            };
+            OnChangePathDialogQuery(changePathViewModel);
+
+            if (changePathViewModel.IsAccept && !string.IsNullOrEmpty(changePathViewModel.PathFrom) && !string.IsNullOrEmpty(changePathViewModel.PathTo))
+            {
+                for (int i = 0; i < MediaData.CurrentList.Traks.Count; i++)
+                {
+                    MediaData.CurrentList.Traks[i].FullDirectoryName = MediaData.CurrentList.Traks[i].FullDirectoryName.Replace(changePathViewModel.PathFrom, changePathViewModel.PathTo);
+                }
+                Save();
+            }
+        }
+        //-------------------------------------------------------------------------------------------------------------------
+        private bool CanChangePathAction()
         {
             return true;
         }

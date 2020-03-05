@@ -17,6 +17,7 @@ namespace PlayerCommon
         event Action StopQuery;
         event Action<object, object> ListChangeQuery;
         event Action<object> FolderDialogQuery;
+        event Action<object> ChangePathDialogQuery;
         void EndAction(bool isFailed);
         int TrackByList(object pList);
         void OnLoad();

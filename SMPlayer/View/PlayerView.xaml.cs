@@ -72,11 +72,13 @@ namespace SMPlayer
             IPlayerActionQueriable playerAction = DataContext as IPlayerActionQueriable;
             if (playerAction != null)
             {
+
                 playerAction.PlayQuery += Play;
                 playerAction.PauseQuery += Pause;
                 playerAction.StopQuery += Stop;
                 playerAction.ListChangeQuery += PlayerActionOnListChangeQuery;
                 playerAction.FolderDialogQuery += playerAction_FolderDialogQuery;
+                playerAction.ChangePathDialogQuery += playerAction_ChangePathDialogQuery;
             }
             ISavable saveModel = DataContext as ISavable;
             if (saveModel != null)
@@ -197,13 +199,20 @@ namespace SMPlayer
             var pos2 = workPlayer.Position;
 
             return pos2 != pos1;
-        }        
+        }
         //----------------------------------------------------------------------------------------------------------------------    
         void playerAction_FolderDialogQuery(object obj)
         {
             FolderView folderView = new FolderView();
             folderView.DataContext = obj;
             folderView.ShowDialog();
+        }
+        //----------------------------------------------------------------------------------------------------------------------    
+        void playerAction_ChangePathDialogQuery(object obj)
+        {
+            ChangePathView changePathView = new ChangePathView();
+            changePathView.DataContext = obj;
+            changePathView.ShowDialog();
         }
         //----------------------------------------------------------------------------------------------------------------------    
         private void timer_Tick(object sender, EventArgs e)

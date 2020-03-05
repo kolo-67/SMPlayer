@@ -44,6 +44,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangePathViewModel.cs" />
     <Compile Include="ComputerElementViewModel.cs" />
     <Compile Include="DirectoryElementViewModel.cs" />
     <Compile Include="DiskElementViewModel.cs" />
